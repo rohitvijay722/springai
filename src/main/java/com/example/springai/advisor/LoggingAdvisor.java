@@ -16,11 +16,14 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LoggingAdvisor implements CallAdvisor{
+
     @Override
     public ChatClientResponse adviseCall(ChatClientRequest chatClientRequest, CallAdvisorChain callAdvisorChain) {
+        System.out.println("============================");
         System.out.println("Request :: " + chatClientRequest);
         ChatClientResponse chatClientResponse = callAdvisorChain.nextCall(chatClientRequest);
         System.out.println("Response :: " + chatClientResponse);
+        System.out.println("============================");
         return chatClientResponse;
     }
 
@@ -33,4 +36,5 @@ public class LoggingAdvisor implements CallAdvisor{
     public int getOrder() {
         return 0;
     }
+
 }

@@ -26,6 +26,8 @@ dependencies {
 	implementation 'org.springframework.ai:spring-ai-starter-model-google-genai'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	implementation 'org.springframework.ai:spring-ai-starter-model-google-genai-embedding'
+	implementation 'org.springframework.ai:spring-ai-vector-store'
 }
 
 dependencyManagement {
