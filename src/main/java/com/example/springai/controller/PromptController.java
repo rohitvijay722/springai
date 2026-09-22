@@ -1,6 +1,7 @@
 package com.example.springai.controller;
 
 import com.example.springai.advisor.LoggingAdvisor;
+import com.example.springai.tools.DummyTool;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
@@ -28,14 +29,16 @@ public class PromptController {
     // ChatClient is built using an auto-configured Builder
     private final ChatClient chatClient;
     private final VectorStoreRetriever vectorStoreRetriever;
+    private final DummyTool dummyTool;
 
-    public PromptController(ChatClient.Builder chatClientBuilder, ChatMemoryRepository chatMemoryRepository, VectorStoreRetriever vectorStoreRetriever){
+    public PromptController(ChatClient.Builder chatClientBuilder, ChatMemoryRepository chatMemoryRepository, VectorStoreRetriever vectorStoreRetriever, DummyTool dummyTool){
         // chatmemoryrepository uses concurrenthashmap to store the conversation id and content, we can use other type of chat memory respository as well
         this.chatClient = chatClientBuilder.defaultAdvisors(
                 new LoggingAdvisor(),
                 MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().chatMemoryRepository(chatMemoryRepository).maxMessages(3).build()).build()
         ).build();
         this.vectorStoreRetriever = vectorStoreRetriever;
+        this.dummyTool = dummyTool;
     }
 
     @GetMapping("/prompt")
@@ -56,7 +59,7 @@ public class PromptController {
                 Context: ${context}
                 
                 Question: ${prompt}
-                """).param("context", context).param("prompt", prompt))
+                """).param("context", context).param("prompt", prompt)).tools(dummyTool)
                 .advisors(chatMemory -> chatMemory.param(MessageWindowChatMemory.CONVERSATION_ID, conversationId))
                 .call()
                 .content();
