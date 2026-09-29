@@ -2,7 +2,9 @@ package com.example.springai.tools;
 
 import com.example.springai.client.DummyPostClient;
 import com.example.springai.dto.Post;
+import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tools.jackson.core.type.TypeReference;
@@ -39,6 +41,29 @@ public class DummyTool {
             System.out.println(str);
         }
         return n*(n+1)/2;
+    }
+
+    /**
+     * For now, we will be sending the details like userId from tool param and in context,
+     * we will be sending the details for account balance
+     * @param userId the id of the user
+     * @param context the context sent from client(chat client)
+     * @return A string containing the product and its price, where product comes from user's shopping cart
+     */
+    @Tool(description = "Get the user shopping product details and price for amazon")
+    String getShoppingCart(@ToolParam(description = "the id of the user") String userId, ToolContext context){
+        String response = "product:";
+        switch(userId){
+            case "rvijay" -> {response+= "laptop, price:80";}
+            case "vsoni" -> {response+= "pen, price:10";}
+            case "pvaishanv" -> {response+= "cake, price:20";}
+            case "ttiwari" -> {response+= "bottle, price:35";}
+            default -> {response+= "hamburger, price:12";}
+        }
+        if(context.getContext().containsKey(userId) && (Integer)context.getContext().get(userId) >= Integer.parseInt(response.substring(response.length()-2))){
+            return response;
+        }
+        return "Insufficient balance : " + context.getContext().get(userId);
     }
 
 }

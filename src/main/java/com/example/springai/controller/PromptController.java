@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -60,6 +61,7 @@ public class PromptController {
                 
                 Question: ${prompt}
                 """).param("context", context).param("prompt", prompt)).tools(dummyTool)
+                .toolContext(Map.of("rvijay", 100, "vsoni", 5, "pvaishanav" , 11, "ttiwari", 25))
                 .advisors(chatMemory -> chatMemory.param(MessageWindowChatMemory.CONVERSATION_ID, conversationId))
                 .call()
                 .content();
